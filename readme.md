@@ -1,6 +1,6 @@
 # DailyLife Health Coach
 
-A responsive full-stack prototype that collects demographic, health, and lifestyle information and returns structured, evidence-minded recommendations from a stubbed assistant API.
+A responsive full-stack prototype that collects demographic, health, and lifestyle information and returns structured, evidence-minded recommendations from an OpenAI Assistant.
 
 ## Project structure
 
@@ -19,11 +19,12 @@ Create a `.env` file inside `server/` with:
 ```
 PORT=9500
 ALLOWED_ORIGINS=http://localhost:9501
-LLM_API_KEY=your-api-key-here
+API_KEY=your-openai-api-key
+API_ASSISTANT_ID=your-assistant-id
 DATABASE_URL=postgres://...
 ```
 
-The demo backend does not call an external LLM but the `LLM_API_KEY` placeholder is included for future integration.
+`API_KEY` and `API_ASSISTANT_ID` are used to call the OpenAI Assistants API for live recommendations.
 
 ## Setup & development
 

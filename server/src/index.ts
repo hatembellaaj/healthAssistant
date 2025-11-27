@@ -4,8 +4,9 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import { recommendationRequestSchema } from './utils/validation';
-import { buildRecommendationsTemplate, buildUserSummary } from './utils/promptBuilder';
+import { buildRecommendationsTemplate } from './utils/promptBuilder';
 import { RecommendationRequest, RecommendationResponse } from './types/health';
+import { requestAssistantRecommendations } from './utils/assistantClient';
 
 dotenv.config();
 
@@ -30,16 +31,9 @@ app.post('/api/assistant/recommendations', async (req, res) => {
     const parsed = recommendationRequestSchema.parse(req.body) as RecommendationRequest;
     const profile = parsed.profile;
 
-    const userSummary = buildUserSummary(profile);
     const prompt = buildRecommendationsTemplate(profile);
 
-    // In production, replace this stub with a call to an LLM provider using the prompt above.
-    const responseText = `## Summary of situation\n${userSummary || 'Profile data not provided.'}\n\n` +
-      `## Key observations\n- Data captured for personalized coaching.\n- Remember: this app is not a medical device.\n\n` +
-      `## Recommendations for next weeks\n- Keep consistent movement most days of the week.\n- Focus meals on vegetables, lean proteins, and whole grains.\n- Aim for regular sleep and stress-management breaks.\n\n` +
-      `## Location-adapted notes\n- If weather or environment limits exercise, prioritize indoor routines.\n\n` +
-      `## Red flags & when to see a doctor\n- Chest pain, sudden shortness of breath, or neurological symptoms warrant urgent care.\n\n` +
-      `## Tracking & next steps\n- Record vitals weekly and update this profile to refresh guidance.\n\nPrompt summary used:\n\n${prompt}`;
+    const responseText = await requestAssistantRecommendations(prompt);
 
     const response: RecommendationResponse = {
       recommendations_text: responseText,
@@ -53,7 +47,8 @@ app.post('/api/assistant/recommendations', async (req, res) => {
       res.status(400).json({ message: 'Invalid data', issues: (error as any).issues });
       return;
     }
-    res.status(500).json({ message: 'Unexpected error' });
+    const message = error instanceof Error ? error.message : 'Unexpected error';
+    res.status(500).json({ message: 'Failed to generate recommendations', detail: message });
   }
 });
 
