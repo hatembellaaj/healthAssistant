@@ -46,6 +46,12 @@ npm run dev
 
 The client dev server proxies API calls to `http://localhost:9500`.
 
+### Troubleshooting
+
+- **`net::ERR_NAME_NOT_RESOLVED` pointing at `server:9500`** – this means the browser cannot resolve the hostname `server`.
+  - When running **outside Docker**, set `VITE_API_BASE_URL=http://localhost:9500/api` (or remove the variable) so requests go to your local machine rather than the Docker service name.
+  - When running **with Docker Compose** from the same host (e.g., browsing to `http://57.128.75.61:9501/`), your browser is outside the Compose network, so `server` will not resolve. Set `VITE_API_BASE_URL` in `client/.env` to the public IP of the host machine, e.g. `VITE_API_BASE_URL=http://57.128.75.61:9500/api`.
+
 ### Docker
 
 You can run the full stack with Docker using the included compose file (ports 9500-9600 range):
