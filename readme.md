@@ -63,14 +63,17 @@ docker-compose up --build
 - API: http://localhost:9500
 - Front-end: http://localhost:9501 (build-time API target can be overridden with `VITE_API_BASE_URL`).
 
-## Testing
+## Tests unitaires
 
-Backend unit tests (validation + prompt builder):
+Des tests Vitest vérifient la validation des données, la construction des prompts et les routes principales de l'API (health check et génération de recommandations, cette dernière étant mockée pour éviter les appels réseau). Pour les exécuter :
 
 ```
 cd server
+npm install
 npm test
 ```
+
+Les tests peuvent être relancés en mode veille avec `npm test -- --watch`.
 
 ## API overview
 
