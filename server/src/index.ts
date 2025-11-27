@@ -77,8 +77,11 @@ app.put('/api/profile', (req, res) => {
 });
 
 const port = Number(process.env.PORT) || 9500;
-app.listen(port, () => {
-  console.log(`DailyLife Health Coach backend listening on port ${port}`);
-});
+
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(port, () => {
+    console.log(`DailyLife Health Coach backend listening on port ${port}`);
+  });
+}
 
 export default app;
