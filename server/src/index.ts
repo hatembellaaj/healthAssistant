@@ -12,7 +12,23 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
-app.use(cors({ origin: process.env.ALLOWED_ORIGINS?.split(',') ?? '*' }));
+
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',').map((origin) => origin.trim()).filter(Boolean) ?? [];
+const allowAllOrigins = allowedOrigins.length === 0 || allowedOrigins.includes('*');
+
+const corsOptions = allowAllOrigins
+  ? {}
+  : {
+      origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
+    };
+
+app.use(cors(corsOptions));
 app.use(helmet());
 
 const limiter = rateLimit({
