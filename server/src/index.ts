@@ -65,7 +65,7 @@ app.put('/api/profile', (req, res) => {
   res.json({ saved: true, profile: req.body });
 });
 
-const port = process.env.PORT || 4000;
+const port = Number(process.env.PORT) || 9500;
 app.listen(port, () => {
   console.log(`DailyLife Health Coach backend listening on port ${port}`);
 });
