@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { FC, FormEvent, ReactNode, useEffect, useMemo, useState } from 'react';
 import { HealthProfile, RecommendationResponse } from './types';
 
 const initialProfile: HealthProfile = {
@@ -68,7 +68,7 @@ const sanitizeProfile = (profile: HealthProfile): HealthProfile => ({
     : undefined,
 });
 
-const SectionCard: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
+const SectionCard: FC<{ title: string; children: ReactNode }> = ({ title, children }) => (
   <section className="card">
     <header className="card-header">
       <h2>{title}</h2>
@@ -77,7 +77,7 @@ const SectionCard: React.FC<{ title: string; children: React.ReactNode }> = ({ t
   </section>
 );
 
-const BasicInfoStep: React.FC<SectionProps> = ({ profile, setProfile }) => {
+const BasicInfoStep: FC<SectionProps> = ({ profile, setProfile }) => {
   const bmi = useMemo(() => {
     if (!profile.height_cm || !profile.weight_kg) return null;
     const meters = Number(profile.height_cm) / 100;
@@ -128,7 +128,7 @@ const BasicInfoStep: React.FC<SectionProps> = ({ profile, setProfile }) => {
   );
 };
 
-const VitalsStep: React.FC<SectionProps> = ({ profile, setProfile }) => (
+const VitalsStep: FC<SectionProps> = ({ profile, setProfile }) => (
   <SectionCard title="Vitals">
     <div className="grid">
       <label>
@@ -139,7 +139,10 @@ const VitalsStep: React.FC<SectionProps> = ({ profile, setProfile }) => (
           onChange={(e) =>
             setProfile({
               ...profile,
-              blood_pressure: { ...profile.blood_pressure, systolic: e.target.value ? Number(e.target.value) : '' },
+              blood_pressure: {
+                ...(profile.blood_pressure ?? { systolic: '', diastolic: '' }),
+                systolic: e.target.value ? Number(e.target.value) : '',
+              },
             })
           }
         />
@@ -152,7 +155,10 @@ const VitalsStep: React.FC<SectionProps> = ({ profile, setProfile }) => (
           onChange={(e) =>
             setProfile({
               ...profile,
-              blood_pressure: { ...profile.blood_pressure, diastolic: e.target.value ? Number(e.target.value) : '' },
+              blood_pressure: {
+                ...(profile.blood_pressure ?? { systolic: '', diastolic: '' }),
+                diastolic: e.target.value ? Number(e.target.value) : '',
+              },
             })
           }
         />
@@ -162,7 +168,15 @@ const VitalsStep: React.FC<SectionProps> = ({ profile, setProfile }) => (
         <input
           type="date"
           value={profile.blood_pressure?.measured_at ?? ''}
-          onChange={(e) => setProfile({ ...profile, blood_pressure: { ...profile.blood_pressure, measured_at: e.target.value } })}
+          onChange={(e) =>
+            setProfile({
+              ...profile,
+              blood_pressure: {
+                ...(profile.blood_pressure ?? { systolic: '', diastolic: '' }),
+                measured_at: e.target.value,
+              },
+            })
+          }
         />
       </label>
       <label>
@@ -177,7 +191,7 @@ const VitalsStep: React.FC<SectionProps> = ({ profile, setProfile }) => (
   </SectionCard>
 );
 
-const MedicalStep: React.FC<SectionProps> = ({ profile, setProfile }) => {
+const MedicalStep: FC<SectionProps> = ({ profile, setProfile }) => {
   const [conditionsText, setConditionsText] = useState((profile.conditions || []).join(', '));
   const [allergiesText, setAllergiesText] = useState((profile.allergies || []).join(', '));
 
@@ -215,7 +229,7 @@ const MedicalStep: React.FC<SectionProps> = ({ profile, setProfile }) => {
   );
 };
 
-const LifestyleStep: React.FC<SectionProps> = ({ profile, setProfile }) => (
+const LifestyleStep: FC<SectionProps> = ({ profile, setProfile }) => (
   <SectionCard title="Lifestyle">
     <div className="grid">
       <label>
@@ -345,7 +359,7 @@ const LifestyleStep: React.FC<SectionProps> = ({ profile, setProfile }) => (
   </SectionCard>
 );
 
-const LocationStep: React.FC<SectionProps & { onGeoCapture: () => void }> = ({ profile, setProfile, onGeoCapture }) => (
+const LocationStep: FC<SectionProps & { onGeoCapture: () => void }> = ({ profile, setProfile, onGeoCapture }) => (
   <SectionCard title="Location & Context">
     <div className="grid">
       <label>
@@ -385,7 +399,7 @@ const LocationStep: React.FC<SectionProps & { onGeoCapture: () => void }> = ({ p
   </SectionCard>
 );
 
-const ReviewStep: React.FC<{ profile: HealthProfile; consent: boolean; setConsent: (value: boolean) => void }> = ({ profile, consent, setConsent }) => (
+const ReviewStep: FC<{ profile: HealthProfile; consent: boolean; setConsent: (value: boolean) => void }> = ({ profile, consent, setConsent }) => (
   <SectionCard title="Review & Consent">
     <pre className="summary">{JSON.stringify(profile, null, 2)}</pre>
     <div className="disclaimer">
@@ -398,7 +412,7 @@ const ReviewStep: React.FC<{ profile: HealthProfile; consent: boolean; setConsen
   </SectionCard>
 );
 
-const RecommendationsPanel: React.FC<{
+const RecommendationsPanel: FC<{
   response: RecommendationResponse | null;
   onEdit: () => void;
 }> = ({ response, onEdit }) => (
@@ -416,7 +430,7 @@ const RecommendationsPanel: React.FC<{
   </SectionCard>
 );
 
-const App: React.FC = () => {
+const App: FC = () => {
   const [profile, setProfile] = useState<HealthProfile>(initialProfile);
   const [step, setStep] = useState(0);
   const [consent, setConsent] = useState(false);
@@ -469,7 +483,7 @@ const App: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!consent) {
       setError('You must acknowledge the disclaimer before submitting.');
