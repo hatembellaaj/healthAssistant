@@ -4,7 +4,7 @@ services:
     build: ./server
     environment:
       - PORT=9500
-      - ALLOWED_ORIGINS=http://localhost:9501
+      - ALLOWED_ORIGINS=http://localhost:9501,http://57.128.75.61:9501
     ports:
       - "9500:9500"
   client:
