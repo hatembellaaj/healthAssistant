@@ -17,8 +17,8 @@ A responsive full-stack prototype that collects demographic, health, and lifesty
 Create a `.env` file inside `server/` with:
 
 ```
-PORT=4000
-ALLOWED_ORIGINS=http://localhost:5173
+PORT=9500
+ALLOWED_ORIGINS=http://localhost:9501
 LLM_API_KEY=your-api-key-here
 DATABASE_URL=postgres://...
 ```
@@ -43,7 +43,18 @@ npm install
 npm run dev
 ```
 
-The client dev server proxies API calls to `http://localhost:4000`.
+The client dev server proxies API calls to `http://localhost:9500`.
+
+### Docker
+
+You can run the full stack with Docker using the included compose file (ports 9500-9600 range):
+
+```
+docker-compose up --build
+```
+
+- API: http://localhost:9500
+- Front-end: http://localhost:9501 (build-time API target can be overridden with `VITE_API_BASE_URL`).
 
 ## Testing
 

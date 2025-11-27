@@ -28,6 +28,8 @@ const initialProfile: HealthProfile = {
 
 const steps = ['Basics', 'Vitals', 'Medical', 'Lifestyle', 'Location', 'Review'];
 
+const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL ?? '/api').replace(/\/$/, '');
+
 type SectionProps = {
   profile: HealthProfile;
   setProfile: (profile: HealthProfile) => void;
@@ -448,7 +450,7 @@ const App: React.FC = () => {
     setError(null);
     try {
       const payload = { userId: null, profile: sanitizeProfile(profile) };
-      const result = await fetch('/api/assistant/recommendations', {
+      const result = await fetch(`${apiBaseUrl}/assistant/recommendations`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

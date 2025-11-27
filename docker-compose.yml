@@ -1,0 +1,18 @@
+version: '3.9'
+services:
+  server:
+    build: ./server
+    environment:
+      - PORT=9500
+      - ALLOWED_ORIGINS=http://localhost:9501
+    ports:
+      - "9500:9500"
+  client:
+    build:
+      context: ./client
+      args:
+        - VITE_API_BASE_URL=http://server:9500/api
+    ports:
+      - "9501:9501"
+    depends_on:
+      - server
